@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { Item } = require('../models');
+const { Uploads } = require('./upload');
+
 
 router.get('/item', async (req, res) => {
     try {
@@ -83,6 +85,23 @@ router.delete('/item/:item_id', async (req, res) => {
         console.log(`${req.method} ${req.originalUrl} : ${error.message}`);
         return res.status(400).json({
             message: 'Gagal Menghapus data',
+        });
+    }
+});
+
+router.get('/item/:item_id', async (req, res) => {
+    try {
+        const { item_id } = req.params;
+        const detailData = await Item.findOne({
+            where: {
+                item_id
+            }
+        });
+        return res.status(200).json(detailData);
+    } catch (error) {
+        console.log(`${req.method} ${req.originalUrl} : ${error.message}`);
+        return res.status(400).json({
+            message: 'Gagal mengambil Data',
         });
     }
 });

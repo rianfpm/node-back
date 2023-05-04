@@ -11,16 +11,16 @@ router.post('/sales', async (req, res) => {
 
         for (const item of items) {
             const ItemIn = await Item.findOne({ where: { item_id: item.item_id } });
-            if (item.quantity > ItemIn.stok) {
+            if (item.qty > ItemIn.stok) {
                 return res.status(400).json({
                     message: `Item ${ItemIn.name} is out of stock!`,
                 });
             }
 
-            total_harga = total_harga + (ItemIn.harga_satuan * item.quantity);
+            total_harga = total_harga + (ItemIn.harga_satuan * item.qty);
 
             await Item.update({
-                stok: ItemIn.stok - item.quantity
+                stok: ItemIn.stok - item.qty
             }, {
                 where: {
                     item_id: item.item_id
@@ -45,7 +45,7 @@ router.post('/sales', async (req, res) => {
         })
 
         items.forEach(async item => {
-            await SalesItem.create({ item_id: item.item_id, quantity: item.quantity, sales_id: sales.sales_id })
+            await SalesItem.create({ item_id: item.item_id, quantity: item.qty, sales_id: sales.sales_id })
         });
 
         const data = await Sales.findOne({
